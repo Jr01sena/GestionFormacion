@@ -1,13 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth, users
-
+from app.api import ambiente
 
 app = FastAPI()
 
 # Incluir en el objeto app los routers
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(auth.router, prefix="/access", tags=["login"])
+app.include_router(ambiente.router, prefix="/ambiente", tags=["Ambiente Formación"])
+
 
 # Configuración de CORS para permitir todas las solicitudes desde cualquier origen
 app.add_middleware(
