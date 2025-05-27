@@ -24,6 +24,7 @@ def login_for_access_token(
         )
     access_token = create_access_token(
         data={"sub": str(user.id_usuario), "rol":user.id_rol}
+
     )
 
     return ResponseLoggin(

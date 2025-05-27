@@ -84,7 +84,14 @@ def update_user(
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.put("/modify-status/{user_id}")
-def modify_status(user_id: int, db: Session = Depends(get_db)):
+def modify_status(
+    user_id: int, 
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    if current_user.id_rol != 1:
+        if current_user.id_rol != 2:
+            raise HTTPException(status_code=401, detail="Usuario no autorizado")
     try:
         user_validate = crud_users.get_user_by_id(db, user_id)
         if not user_validate:
