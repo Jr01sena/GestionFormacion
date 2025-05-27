@@ -23,3 +23,4 @@ class UserUpdate(BaseModel):
 
 class UserOut(UserBase):
     id_usuario: int
+    rol: str
