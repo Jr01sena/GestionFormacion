@@ -1,3 +1,7 @@
+CREATE DATABASE gestion_formacion CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+USE gestion_formacion;
+
 -- Tablas sin dependencias o con dependencias ya satisfechas
 CREATE TABLE regional(
     cod_regional INT UNSIGNED PRIMARY KEY,
