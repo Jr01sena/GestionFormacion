@@ -1,8 +1,8 @@
 from pydantic_settings import BaseSettings
+from pydantic import model_validator
 import os
 from dotenv import load_dotenv
 
-# librería en Python que permite cargar variables de entorno
 load_dotenv()
 
 class Settings(BaseSettings):
@@ -17,17 +17,28 @@ class Settings(BaseSettings):
     DB_PASSWORD: str = os.getenv("DB_PASSWORD", "")
     DB_NAME: str = os.getenv("DB_NAME", "")
 
-    DATABASE_URL: str = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    
+    DATABASE_URL: str = ""
+
     # Configuración JWT
     jwt_secret: str = os.getenv("JWT_SECRET")
     jwt_algorithm: str = os.getenv("JWT_ALGORITHM", "HS256")
     jwt_access_token_expire_minutes: int = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
-    # Validaciones
-    CREATE_USER_ADMIN_ADMIN: bool = os.getenv("CREATE_USER_ADMIN_ADMIN")
-    CREATE_USER_ADMIN_INSTRU: bool = os.getenv("CREATE_USER_ADMIN_INSTRU")
-    CREATE_USER_INSTRU: bool = os.getenv("CREATE_USER_INSTRU")
+    # Validaciones (con conversión correcta de string a bool)
+    CREATE_USER_ADMIN_ADMIN: bool = os.getenv("CREATE_USER_ADMIN_ADMIN", "False").lower() == "true"
+    CREATE_USER_ADMIN_INSTRU: bool = os.getenv("CREATE_USER_ADMIN_INSTRU", "False").lower() == "true"
+    CREATE_USER_INSTRU: bool = os.getenv("CREATE_USER_INSTRU", "False").lower() == "true"
+
+    @model_validator(mode="after")
+    def validate_db(self) -> 'Settings':
+        if not self.DB_NAME:
+            raise ValueError("DB_NAME debe estar definido en el archivo .env")
+        
+        self.DATABASE_URL = (
+            f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        )
+        return self
 
     class Config:
         env_file = ".env"
