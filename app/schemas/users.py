@@ -19,7 +19,7 @@ class UserUpdate(BaseModel):
     tipo_contrato: Optional[str] = Field(default=None, min_length=6, max_length=50)
     telefono: Optional[str] = Field(default=None, min_length=7, max_length=15)
     correo: Optional[EmailStr] = Field(default=None, min_length=7, max_length=100)
-    # estado: Optional[bool] = None
+    estado: Optional[bool] = None
 
 class UserOut(UserBase):
     id_usuario: int

@@ -14,18 +14,14 @@ router = APIRouter()
 def create_user(
     user: UserCreate, 
     db: Session = Depends(get_db),
-    current_user: UserOut = Depends(get_current_user)
+    user_token: UserOut = Depends(get_current_user)
 ):
-    if current_user.id_rol == 2:
+    if user_token.id_rol == 2:
         if user.id_rol == 1 or user.id_rol == 2:
             raise HTTPException(status_code=401, detail="Usuario no autorizado")
-    
-    # if current_user.id_rol == 3:
-    #     raise HTTPException(status_code=401, detail="Usuario no autorizado")
-    
-    if settings.CREATE_USER_INSTRU == False:
-        raise HTTPException(status_code=401, detail="Usuario no autorizado")
 
+    if user_token.id_rol == 3:
+        raise HTTPException(status_code=401, detail="Usuario no autorizado")
     try:
         user_validate = crud_users.get_user_by_email(db, user.correo)
         if user_validate:
