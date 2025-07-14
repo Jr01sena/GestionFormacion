@@ -2,10 +2,10 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 class AmbienteBase(BaseModel):
-    nombre_ambiente: str = Field(..., max_length=40)
+    nombre_ambiente: str = Field(min_length=3, max_length=40)
     num_max_aprendices: int
-    municipio: str = Field(..., max_length=40)
-    ubicacion: str = Field(..., max_length=80)
+    municipio: str = Field(min_length=3, max_length=40)
+    ubicacion: str = Field(min_length=3, max_length=80)
     cod_centro: int
 
 class AmbienteCreate(AmbienteBase):
