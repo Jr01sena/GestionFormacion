@@ -57,5 +57,5 @@ def modify_estado_ambiente(
     current_user: UserOut = Depends(get_current_user)
 ):
     authorize_admin(current_user)
-    crud_ambiente.toggle_estado_ambiente(db, ambiente_id)
+    crud_ambiente.cambiar_estado_ambiente(db, ambiente_id)
     return {"message": "Estado del ambiente modificado correctamente"}

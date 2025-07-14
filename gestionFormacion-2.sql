@@ -86,7 +86,7 @@ CREATE TABLE metas(
 
 -- Tablas con dependencias múltiples, ahora todas las tablas que referencian existen
 CREATE TABLE programa_competencia(
-    cod_prog_competencia INT UNSIGNED PRIMARY KEY,
+    cod_prog_competencia INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     cod_programa INT UNSIGNED,
     la_version TINYINT UNSIGNED,
     cod_competencia INT UNSIGNED,
@@ -132,7 +132,7 @@ CREATE TABLE datos_grupo(
     formacion  TINYINT UNSIGNED,
     condicionado  TINYINT UNSIGNED,
     aplazado  TINYINT UNSIGNED,
-    retiro_voluntuario  TINYINT UNSIGNED,
+    retiro_voluntario  TINYINT UNSIGNED,
     cancelado  TINYINT UNSIGNED,
     cancelamiento_vit_comp  TINYINT UNSIGNED,
     desercion_vit_comp  TINYINT UNSIGNED,
