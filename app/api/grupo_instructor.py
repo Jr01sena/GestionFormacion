@@ -7,6 +7,8 @@ from app.schemas.grupo_instructor import GrupoInstructorCreate, GrupoInstructorO
 from app.crud import grupo_instructor as crud_grupo_instructor
 from sqlalchemy.exc import SQLAlchemyError
 from typing import List
+from sqlalchemy import text
+
 
 router = APIRouter()
 
@@ -19,18 +21,56 @@ def asignar_instructor(
     if current_user.id_rol not in [1, 2]:
         raise HTTPException(status_code=401, detail="Usuario no autorizado")
 
-    # Validar que el instructor exista y tenga rol de instructor (id_rol = 3)
-    if not crud_grupo_instructor.verificar_instructor_valido(db, data.id_instructor):
-        raise HTTPException(
-            status_code=400, 
-            detail="El usuario asignado no es un instructor válido (id_rol ≠ 3)"
-        )
-
     try:
+        # Verificar que el instructor exista y tenga rol 3
+        query = text("""
+            SELECT nombre_completo FROM usuario
+            WHERE id_usuario = :id AND id_rol = 3
+        """)
+        result = db.execute(query, {"id": data.id_instructor}).mappings().first()
+
+        if not result:
+            raise HTTPException(
+                status_code=400, 
+                detail="El usuario no es un instructor válido (id_rol ≠ 3)"
+            )
+
+        # Asignar instructor
         crud_grupo_instructor.create_grupo_instructor(db, data)
-        return {"message": "Instructor asignado correctamente"}
+
+        return {
+            "message": "Instructor asignado correctamente",
+            "instructor": {
+                "id_instructor": data.id_instructor,
+                "nombre_completo": result["nombre_completo"]
+            }
+        }
+
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Error al asignar instructor")
+
+
+# @router.post("/asignar", status_code=status.HTTP_201_CREATED)
+# def asignar_instructor(
+#     data: GrupoInstructorCreate,
+#     db: Session = Depends(get_db),
+#     current_user: UserOut = Depends(get_current_user)
+# ):
+#     if current_user.id_rol not in [1, 2]:
+#         raise HTTPException(status_code=401, detail="Usuario no autorizado")
+
+#     # Validar que el instructor exista y tenga rol de instructor (id_rol = 3)
+#     if not crud_grupo_instructor.verificar_instructor_valido(db, data.id_instructor):
+#         raise HTTPException(
+#             status_code=400, 
+#             detail="El usuario asignado no es un instructor válido (id_rol ≠ 3)"
+#         )
+
+#     try:
+#         crud_grupo_instructor.create_grupo_instructor(db, data)
+#         return {"message": "Instructor asignado correctamente"}
+#     except SQLAlchemyError:
+#         raise HTTPException(status_code=500, detail="Error al asignar instructor")
 
 
 @router.delete("/eliminar")
