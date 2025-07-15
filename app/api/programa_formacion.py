@@ -5,6 +5,7 @@ from app.schemas.users import UserOut
 from app.crud import programa_formacion as crud_programa
 from core.dependencies import get_current_user
 from core.database import get_db
+from typing import List
 
 router = APIRouter()
 
@@ -23,6 +24,23 @@ def get_programa(
         raise HTTPException(status_code=404, detail="Programa no encontrado")
     
     return programa
+
+
+@router.get("/{cod_programa}", response_model=List[ProgramaOut])
+def get_programa_general(
+    cod_programa: int,
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    if current_user.id_rol not in [1, 2, 3]:
+        raise HTTPException(status_code=401, detail="No autorizado")
+    
+    programas = crud_programa.get_programa_general(db, cod_programa)
+    if not programas:
+        raise HTTPException(status_code=404, detail="No se encontraron versiones del programa")
+    
+    return programas
+
 
 @router.put("/editar/{cod_programa}/{la_version}")
 def editar_horas_programa(

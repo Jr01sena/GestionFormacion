@@ -22,6 +22,23 @@ def get_programa(db: Session, cod_programa: int, la_version: int):
         logger.error(f"Error al consultar el programa: {e}")
         raise Exception("Error al consultar el programa")
 
+def get_programa_general(db: Session, cod_programa: int):
+    try:
+        query = text("""
+            SELECT cod_programa, la_version, nombre, horas_lectivas, horas_productivas
+            FROM programa_formacion
+            WHERE cod_programa = :cod_programa
+            ORDER BY la_version DESC
+        """)
+        results = db.execute(query, {
+            "cod_programa": cod_programa
+        }).mappings().all()
+        return results
+    except SQLAlchemyError as e:
+        logger.error(f"Error al consultar las versiones del programa: {e}")
+        raise Exception("Error al consultar las versiones del programa")
+
+
 def update_horas_programa(db: Session, cod_programa: int, la_version: int, data: ProgramaHorasUpdate) -> bool:
     try:
         query = text("""
