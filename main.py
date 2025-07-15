@@ -10,6 +10,7 @@ from app.api import metas
 from app.api import grupo
 from app.api import competencia
 from app.api import programa_formacion as programa
+from app.api import datos_grupo
 
 app = FastAPI()
 
@@ -24,7 +25,8 @@ app.include_router(festivo.router, prefix="/festivos", tags=["Festivos"])
 app.include_router(metas.router, prefix="/metas", tags=["Metas"])
 app.include_router(grupo.router, prefix="/grupo", tags=["Grupo formación"])
 app.include_router(competencia.router, prefix="/competencia", tags=["Competencias"])
-app.include_router(programa.router, prefix="/programa", tags=["Programa formación"])    
+app.include_router(programa.router, prefix="/programa", tags=["Programa formación"]) 
+app.include_router(datos_grupo.router, prefix="/datos-grupo", tags=["Datos Grupo"])    
 
 # Configuración de CORS para permitir todas las solicitudes desde cualquier origen
 app.add_middleware(
