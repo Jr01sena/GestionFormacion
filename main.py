@@ -8,6 +8,7 @@ from app.api import grupo_instructor
 from app.api import festivo
 from app.api import metas
 from app.api import grupo
+from app.api import competencia
 
 app = FastAPI()
 
@@ -21,6 +22,7 @@ app.include_router(grupo_instructor.router, prefix="/grupo-instructor", tags=["G
 app.include_router(festivo.router, prefix="/festivos", tags=["Festivos"])
 app.include_router(metas.router, prefix="/metas", tags=["Metas"])
 app.include_router(grupo.router, prefix="/grupo", tags=["Grupo formación"])
+app.include_router(competencia.router, prefix="/competencia", tags=["Competencias"])
 
 # Configuración de CORS para permitir todas las solicitudes desde cualquier origen
 app.add_middleware(

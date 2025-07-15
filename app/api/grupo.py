@@ -27,7 +27,7 @@ def get_grupo_by_cod_ficha(
     return grupo
 
 
-@router.put("/update/{cod_ficha}")
+@router.put("/editar/{cod_ficha}")
 def update_campos_editables_grupo(
     cod_ficha: int,
     grupo_data: GrupoEditableUpdate,
