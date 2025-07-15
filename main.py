@@ -6,6 +6,7 @@ from app.api import cargar_archivos
 from app.api import centro_formacion as centro
 from app.api import grupo_instructor
 from app.api import festivo
+from app.api import metas
 
 
 app = FastAPI()
@@ -18,6 +19,7 @@ app.include_router(cargar_archivos.router, prefix="/archivos", tags=["Cargar arc
 app.include_router(centro.router, prefix="/centro", tags=["Centro formación"])
 app.include_router(grupo_instructor.router, prefix="/grupo-instructor", tags=["Grupo Instructor"])
 app.include_router(festivo.router, prefix="/festivos", tags=["Festivos"])
+app.include_router(metas.router, prefix="/metas", tags=["Metas"])
 
 # Configuración de CORS para permitir todas las solicitudes desde cualquier origen
 app.add_middleware(
