@@ -21,6 +21,28 @@ def create_grupo_instructor(db: Session, data: GrupoInstructorCreate):
         logger.error(f"Error al asignar instructor a ficha: {e}")
         raise
 
+
+def update_grupo_instructor(db: Session, cod_ficha: int, id_actual: int, id_nuevo: int) -> bool:
+    try:
+        query = text("""
+            UPDATE grupo_instructor
+            SET id_instructor = :id_nuevo
+            WHERE cod_ficha = :cod_ficha AND id_instructor = :id_actual
+        """)
+        result = db.execute(query, {
+            "cod_ficha": cod_ficha,
+            "id_actual": id_actual,
+            "id_nuevo": id_nuevo
+        })
+        db.commit()
+        return result.rowcount > 0
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(f"Error al actualizar asignación: {e}")
+        raise
+
+
+
 def delete_grupo_instructor(db: Session, cod_ficha: int, id_instructor: int):
     try:
         query = text("""
