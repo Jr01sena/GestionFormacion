@@ -9,8 +9,8 @@ from app.crud import resultado_aprendizaje as crud_resultado
 
 router = APIRouter()
 
-@router.get("/get-by-id/{cod_resultado}", response_model=ResultadoAprendizajeOut)
-def get_resultado_by_id(
+@router.get("/get-by-cod-resultado/{cod_resultado}", response_model=ResultadoAprendizajeOut)
+def get_resultado_by_cod_resultado(
     cod_resultado: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)

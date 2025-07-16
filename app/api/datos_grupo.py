@@ -8,8 +8,8 @@ from app.crud import datos_grupo as crud_datos_grupo
 
 router = APIRouter()
 
-@router.get("/get-by-ficha/{cod_ficha}", response_model=DatosGrupoOut)
-def get_datos_grupo_by_ficha(
+@router.get("/get-by-cod-ficha/{cod_ficha}", response_model=DatosGrupoOut)
+def get_datos_grupo_by_cod_ficha(
     cod_ficha: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)

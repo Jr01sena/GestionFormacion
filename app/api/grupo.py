@@ -49,28 +49,28 @@ def update_campos_editables_grupo(
         raise HTTPException(status_code=500, detail="Error al actualizar el grupo en base de datos")
 
 
-@router.put("/update-ambiente/{cod_ficha}")
-def update_ambiente_grupo(
-    cod_ficha: int,
-    ambiente_data: GrupoAmbienteUpdate,
-    db: Session = Depends(get_db),
-    current_user: UserOut = Depends(get_current_user)
-):
-    if current_user.id_rol not in [1, 2]:
-        raise HTTPException(status_code=401, detail="No autorizado para asignar ambientes")
+# @router.put("/update-ambiente/{cod_ficha}")
+# def update_ambiente_grupo(
+#     cod_ficha: int,
+#     ambiente_data: GrupoAmbienteUpdate,
+#     db: Session = Depends(get_db),
+#     current_user: UserOut = Depends(get_current_user)
+# ):
+#     if current_user.id_rol not in [1, 2]:
+#         raise HTTPException(status_code=401, detail="No autorizado para asignar ambientes")
 
-    try:
-        success = crud_grupo.asignar_ambiente_grupo(db, cod_ficha, ambiente_data)
-        if not success:
-            raise HTTPException(status_code=400, detail="No se pudo actualizar el ambiente del grupo")
+#     try:
+#         success = crud_grupo.asignar_ambiente_grupo(db, cod_ficha, ambiente_data)
+#         if not success:
+#             raise HTTPException(status_code=400, detail="No se pudo actualizar el ambiente del grupo")
 
-        return {"message": "Ambiente asignado correctamente"}
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=500, detail="Error interno en la base de datos")
+#         return {"message": "Ambiente asignado correctamente"}
+#     except SQLAlchemyError as e:
+#         raise HTTPException(status_code=500, detail="Error interno en la base de datos")
 
 
-@router.get("/get-by-centro/{cod_centro}", response_model=List[GrupoOut])
-def get_grupos_by_centro(
+@router.get("/get-by-cod-centro/{cod_centro}", response_model=List[GrupoOut])
+def get_grupos_by_cod_centro(
     cod_centro: int,
     desde_fecha: Optional[date] = Query(None, description="Filtrar desde esta fecha de inicio"),
     db: Session = Depends(get_db),

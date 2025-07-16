@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from app.schemas.metas import MetaCreate, MetaUpdate
+from typing import Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -45,13 +46,21 @@ def get_meta_by_id(db: Session, id_meta: int):
         logger.error(f"Error al obtener meta por ID: {e}")
         raise
 
-def get_metas_by_centro(db: Session, cod_centro: int):
+
+def get_metas_by_centro(db: Session, cod_centro: int, anio: Optional[int] = None):
     try:
-        query = text("SELECT * FROM metas WHERE cod_centro = :cod_centro")
-        return db.execute(query, {"cod_centro": cod_centro}).mappings().all()
+        query = "SELECT * FROM metas WHERE cod_centro = :cod_centro"
+        params = {"cod_centro": cod_centro}
+
+        if anio:
+            query += " AND anio = :anio"
+            params["anio"] = anio
+
+        return db.execute(text(query), params).mappings().all()
     except SQLAlchemyError as e:
-        logger.error(f"Error al obtener metas por centro: {e}")
+        logger.error(f"Error al obtener metas por centro y año: {e}")
         raise
+
 
 def delete_meta(db: Session, id_meta: int):
     try:

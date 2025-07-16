@@ -13,24 +13,28 @@ from app.api import programa_formacion as programa
 from app.api import datos_grupo
 from app.api import resultado_aprendizaje as resultado
 from app.api import programa_competencia
+from app.api import programacion
 
 app = FastAPI()
 
 # Incluir en el objeto app los routers
-app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(auth.router, prefix="/access", tags=["login"])
+app.include_router(users.router, prefix="/users", tags=["users"])
+app.include_router(centro.router, prefix="/centro", tags=["Centro formación"])
 app.include_router(ambiente.router, prefix="/ambiente", tags=["Ambiente formación"])
 app.include_router(cargar_archivos.router, prefix="/archivos", tags=["Cargar archivos"])
-app.include_router(centro.router, prefix="/centro", tags=["Centro formación"])
-app.include_router(grupo_instructor.router, prefix="/grupo-instructor", tags=["Grupo Instructor"])
 app.include_router(festivo.router, prefix="/festivos", tags=["Festivos"])
-app.include_router(metas.router, prefix="/metas", tags=["Metas"])
-app.include_router(grupo.router, prefix="/grupo", tags=["Grupo formación"])
-app.include_router(competencia.router, prefix="/competencia", tags=["Competencias"])
-app.include_router(programa.router, prefix="/programa", tags=["Programa formación"]) 
-app.include_router(datos_grupo.router, prefix="/datos-grupo", tags=["Datos Grupo"])    
+app.include_router(programa.router, prefix="/programa", tags=["Programa formación"])
+app.include_router(competencia.router, prefix="/competencia", tags=["Competencias"]) 
 app.include_router(resultado.router, prefix="/resultado-aprendizaje", tags=["Resultado Aprendizaje"])
 app.include_router(programa_competencia.router, prefix="/programa-competencia", tags=["Programa Competencia"])
+app.include_router(grupo.router, prefix="/grupo", tags=["Grupo formación"])
+app.include_router(datos_grupo.router, prefix="/datos-grupo", tags=["Datos Grupo"])
+app.include_router(grupo_instructor.router, prefix="/grupo-instructor", tags=["Grupo Instructor"])
+app.include_router(programacion.router, prefix="/programacion", tags=["Programación"])
+app.include_router(metas.router, prefix="/metas", tags=["Metas"])
+    
+
 
 # Configuración de CORS para permitir todas las solicitudes desde cualquier origen
 app.add_middleware(

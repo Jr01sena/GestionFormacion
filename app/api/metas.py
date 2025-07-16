@@ -6,6 +6,8 @@ from app.crud import metas as crud_metas
 from core.database import get_db
 from core.dependencies import get_current_user
 from typing import List
+from typing import Optional
+from fastapi import Query
 
 router = APIRouter()
 
@@ -62,11 +64,13 @@ def get_meta_by_id(
         raise HTTPException(status_code=404, detail="Meta no encontrada")
     return meta
 
-@router.get("/get-by-centro/{cod_centro}", response_model=List[MetaOut])
-def get_metas_by_centro(
+
+@router.get("/get-by-cod-centro/{cod_centro}", response_model=List[MetaOut])
+def get_metas_by_cod_centro(
     cod_centro: int,
+    anio: Optional[int] = Query(None, ge=2000, le=2100),
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)
 ):
     authorize_view(current_user)
-    return crud_metas.get_metas_by_centro(db, cod_centro)
+    return crud_metas.get_metas_by_centro(db, cod_centro, anio)
