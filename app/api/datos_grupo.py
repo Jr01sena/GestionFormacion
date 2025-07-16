@@ -6,7 +6,7 @@ from core.dependencies import get_current_user
 from core.database import get_db
 from app.crud import datos_grupo as crud_datos_grupo
 
-router = APIRouter(prefix="/datos-grupo", tags=["Datos Grupo"])
+router = APIRouter()
 
 @router.get("/get-by-ficha/{cod_ficha}", response_model=DatosGrupoOut)
 def get_datos_grupo_by_ficha(

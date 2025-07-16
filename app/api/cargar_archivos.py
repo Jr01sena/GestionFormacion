@@ -23,7 +23,7 @@ async def upload_df14a(file: UploadFile = File(...), db: Session = Depends(get_d
     return procesar_df14a(db, df)
 
 
-@router.post("/upload-juicios-evaluacion/")
+@router.post("/upload-excel-juicios-evaluacion/")
 async def upload_juicios_evaluacion(file: UploadFile = File(...), db: Session = Depends(get_db)):
     contents = await file.read()
     df = pd.read_excel(BytesIO(contents), engine="openpyxl")

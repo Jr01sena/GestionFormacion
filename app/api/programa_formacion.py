@@ -9,8 +9,8 @@ from typing import List
 
 router = APIRouter()
 
-@router.get("/{cod_programa}/{la_version}", response_model=ProgramaOut)
-def get_programa(
+@router.get("/get-by-cod-programa-la-version/{cod_programa}/{la_version}", response_model=ProgramaOut)
+def get_programa_by_cod_programa_la_version(
     cod_programa: int,
     la_version: int,
     db: Session = Depends(get_db),
@@ -26,8 +26,8 @@ def get_programa(
     return programa
 
 
-@router.get("/{cod_programa}", response_model=List[ProgramaOut])
-def get_programa_general(
+@router.get("/get-by-cod-programa/{cod_programa}", response_model=List[ProgramaOut])
+def get_programas_by_cod_programa(
     cod_programa: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)
@@ -42,8 +42,8 @@ def get_programa_general(
     return programas
 
 
-@router.put("/editar/{cod_programa}/{la_version}")
-def editar_horas_programa(
+@router.put("/update/{cod_programa}/{la_version}")
+def update_horas_programa(
     cod_programa: int,
     la_version: int,
     data: ProgramaHorasUpdate,

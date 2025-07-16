@@ -32,7 +32,7 @@ def create_user(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/get-by-email", response_model=UserOut)
-def get_user(email: str, db: Session = Depends(get_db)):
+def get_user_by_email(email: str, db: Session = Depends(get_db)):
     try:
         user = crud_users.get_user_by_email(db, email)
         if not user:

@@ -30,8 +30,8 @@ def cargar_festivos_masivamente(
 
 
 
-@router.get("/", response_model=List[FestivoOut])
-def get_festivos(
+@router.get("/get-all", response_model=List[FestivoOut])
+def get_all_festivos(
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)
 ):
@@ -39,8 +39,8 @@ def get_festivos(
     return festivos
 
 
-@router.get("/{anio}", response_model=List[FestivoOut])
-def get_festivos_por_anio(
+@router.get("/get-by-year/{anio}", response_model=List[FestivoOut])
+def get_festivos_by_anio(
     anio: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)

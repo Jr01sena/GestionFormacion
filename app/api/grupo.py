@@ -11,7 +11,7 @@ from app.crud import grupo as crud_grupo
 router = APIRouter()
 
 
-@router.get("/{cod_ficha}", response_model=GrupoOut)
+@router.get("/get-by-cod-ficha/{cod_ficha}", response_model=GrupoOut)
 def get_grupo_by_cod_ficha(
     cod_ficha: int,
     db: Session = Depends(get_db),
@@ -27,7 +27,7 @@ def get_grupo_by_cod_ficha(
     return grupo
 
 
-@router.put("/editar/{cod_ficha}")
+@router.put("/update/{cod_ficha}")
 def update_campos_editables_grupo(
     cod_ficha: int,
     grupo_data: GrupoEditableUpdate,
@@ -47,8 +47,8 @@ def update_campos_editables_grupo(
         raise HTTPException(status_code=500, detail="Error al actualizar el grupo en base de datos")
 
 
-@router.put("/asignar-ambiente/{cod_ficha}")
-def asignar_ambiente_grupo(
+@router.put("/update-ambiente/{cod_ficha}")
+def update_ambiente_grupo(
     cod_ficha: int,
     ambiente_data: GrupoAmbienteUpdate,
     db: Session = Depends(get_db),

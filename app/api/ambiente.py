@@ -51,7 +51,7 @@ def get_ambientes_by_centro(
     return crud_ambiente.get_ambientes_by_centro(db, cod_centro)
 
 @router.put("/modify-status/{ambiente_id}")
-def modify_estado_ambiente(
+def modify_status_ambiente(
     ambiente_id: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)

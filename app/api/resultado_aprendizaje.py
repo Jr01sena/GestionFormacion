@@ -7,7 +7,7 @@ from core.dependencies import get_current_user
 from core.database import get_db
 from app.crud import resultado_aprendizaje as crud_resultado
 
-router = APIRouter(prefix="/resultado-aprendizaje", tags=["Resultado Aprendizaje"])
+router = APIRouter()
 
 @router.get("/get-by-id/{cod_resultado}", response_model=ResultadoAprendizajeOut)
 def get_resultado_by_id(
@@ -27,8 +27,8 @@ def get_resultado_by_id(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/get-by-competencia/{cod_competencia}", response_model=List[ResultadoAprendizajeOut])
-def get_resultados_by_competencia(
+@router.get("/get-by-cod-competencia/{cod_competencia}", response_model=List[ResultadoAprendizajeOut])
+def get_resultados_by_cod_competencia(
     cod_competencia: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)

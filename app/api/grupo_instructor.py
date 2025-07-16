@@ -13,7 +13,7 @@ from sqlalchemy import text
 router = APIRouter()
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
-def asignar_instructor(
+def asignar_instructor_grupo(
     data: GrupoInstructorCreate,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)
@@ -74,7 +74,7 @@ def asignar_instructor(
 
 
 @router.put("/update")
-def actualizar_asignacion(
+def update_asignacion(
     data: GrupoInstructorUpdate,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)
@@ -102,7 +102,7 @@ def actualizar_asignacion(
 
 
 @router.delete("/delete")
-def eliminar_asignacion(
+def delete_asignacion(
     cod_ficha: int,
     id_instructor: int,
     db: Session = Depends(get_db),
@@ -127,8 +127,8 @@ def eliminar_asignacion(
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Error al eliminar asignación en base de datos")
 
-@router.get("/instructores-ficha", response_model=List[GrupoInstructorOut])
-def obtener_instructores(
+@router.get("/get-by-ficha", response_model=List[GrupoInstructorOut])
+def get_instructores_by_ficha(
     cod_ficha: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)

@@ -9,8 +9,8 @@ from app.crud import competencia as crud_competencia
 
 router = APIRouter()
 
-@router.get("/{cod_competencia}", response_model=CompetenciaOut)
-def get_competencia(cod_competencia: int, db: Session = Depends(get_db), current_user: UserOut = Depends(get_current_user)):
+@router.get("/get-by-cod-ficha/{cod_competencia}", response_model=CompetenciaOut)
+def get_competencia_by_cod_ficha(cod_competencia: int, db: Session = Depends(get_db), current_user: UserOut = Depends(get_current_user)):
     if current_user.id_rol not in [1, 2, 3]:
         raise HTTPException(status_code=401, detail="No autorizado")
 
@@ -20,8 +20,8 @@ def get_competencia(cod_competencia: int, db: Session = Depends(get_db), current
     return competencia
 
 
-@router.put("/editar-horas/{cod_competencia}")
-def update_horas(
+@router.put("/update/{cod_competencia}")
+def update_horas_competencia(
     cod_competencia: int,
     data: CompetenciaHorasUpdate,
     db: Session = Depends(get_db),

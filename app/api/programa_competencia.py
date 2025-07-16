@@ -7,10 +7,10 @@ from core.dependencies import get_current_user
 from core.database import get_db
 from app.crud import programa_competencia as crud_pc
 
-router = APIRouter(prefix="/programa-competencia", tags=["Programa Competencia"])
+router = APIRouter()
 
 @router.get("/get-by-id/{cod_prog_competencia}", response_model=ProgramaCompetenciaOut)
-def get_pc_by_id(
+def get_programa_competencia_by_id(
     cod_prog_competencia: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)
@@ -28,7 +28,7 @@ def get_pc_by_id(
 
 
 @router.get("/get-by-competencia/{cod_competencia}", response_model=List[ProgramaCompetenciaOut])
-def get_pcs_by_competencia(
+def get_programas_competencia_by_competencia(
     cod_competencia: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)
