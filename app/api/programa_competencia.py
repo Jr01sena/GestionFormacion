@@ -27,8 +27,8 @@ def get_programa_competencia_by_id(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/get-by-competencia/{cod_competencia}", response_model=List[ProgramaCompetenciaOut])
-def get_programas_competencia_by_competencia(
+@router.get("/get-by-cod-competencia/{cod_competencia}", response_model=List[ProgramaCompetenciaOut])
+def get_programas_competencia_by_cod_competencia(
     cod_competencia: int,
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)

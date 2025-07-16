@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from app.schemas.grupo import GrupoEditableUpdate, GrupoAmbienteUpdate
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta, time, date
+from typing import Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -80,3 +81,39 @@ def asignar_ambiente_grupo(db: Session, cod_ficha: int, ambiente_data: GrupoAmbi
         db.rollback()
         logger.error(f"Error al asignar ambiente: {e}")
         raise Exception("Error de base de datos al asignar ambiente al grupo")
+
+
+def get_grupos_by_centro(db: Session, cod_centro: int, desde_fecha: Optional[date] = None):
+    try:
+        query = """
+            SELECT cod_ficha, cod_centro, cod_programa, la_version,
+                   estado_grupo, nombre_nivel, jornada, fecha_inicio, fecha_fin,
+                   etapa, modalidad, responsable, nombre_empresa, nombre_municipio,
+                   nombre_programa_especial, hora_inicio, hora_fin, id_ambiente
+            FROM grupo
+            WHERE cod_centro = :cod_centro
+        """
+
+        params = {"cod_centro": cod_centro}
+
+        if desde_fecha:
+            query += " AND fecha_inicio >= :desde_fecha"
+            params["desde_fecha"] = desde_fecha
+
+        query += " ORDER BY fecha_inicio DESC"
+
+        raw_results = db.execute(text(query), params).mappings().all()
+        
+        grupos = []
+        for row in raw_results:
+            grupo = dict(row)
+            for campo in ["hora_inicio", "hora_fin"]:
+                if isinstance(grupo[campo], timedelta):
+                    grupo[campo] = (datetime.min + grupo[campo]).time()
+            grupos.append(grupo)
+
+        return grupos
+
+    except SQLAlchemyError as e:
+        logger.error(f"Error al obtener grupos por centro y fecha: {e}")
+        raise Exception("Error de base de datos al obtener grupos")

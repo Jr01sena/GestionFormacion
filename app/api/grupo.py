@@ -1,7 +1,9 @@
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-
+from datetime import date
+from fastapi import Query
 from core.database import get_db
 from core.dependencies import get_current_user
 from app.schemas.users import UserOut
@@ -65,3 +67,20 @@ def update_ambiente_grupo(
         return {"message": "Ambiente asignado correctamente"}
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail="Error interno en la base de datos")
+
+
+@router.get("/get-by-centro/{cod_centro}", response_model=List[GrupoOut])
+def get_grupos_by_centro(
+    cod_centro: int,
+    desde_fecha: Optional[date] = Query(None, description="Filtrar desde esta fecha de inicio"),
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    if current_user.id_rol not in [1, 2, 3]:
+        raise HTTPException(status_code=401, detail="No autorizado")
+
+    grupos = crud_grupo.get_grupos_by_centro(db, cod_centro, desde_fecha)
+    if not grupos:
+        raise HTTPException(status_code=404, detail="No se encontraron grupos para el centro y fecha")
+
+    return grupos
