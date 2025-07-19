@@ -104,15 +104,15 @@ def update_programacion(db: Session, id_programacion: int, data: ProgramacionUpd
 
 def get_programacion_by_id(db: Session, id_programacion: int, current_user):
     query = text("""
-        SELECT progamacion.*, 
+        SELECT programacion.*, 
                usuario.nombre_completo AS nombre_instructor,
                competencia.nombre AS nombre_competencia,
                resultado_aprendizaje.nombre AS nombre_resultado
         FROM programacion
-        JOIN usuario ON progamacion.id_instructor = usuario.id_usuario
-        JOIN competencia ON progamacion.cod_competencia = competencia.cod_competencia
-        JOIN resultado_aprendizaje ON progamacion.cod_resultado = resultado_aprendizaje.cod_resultado
-        WHERE progamacion.id_programacion = :id
+        JOIN usuario ON programacion.id_instructor = usuario.id_usuario
+        JOIN competencia ON programacion.cod_competencia = competencia.cod_competencia
+        JOIN resultado_aprendizaje ON programacion.cod_resultado = resultado_aprendizaje.cod_resultado
+        WHERE programacion.id_programacion = :id
     """)
     result = db.execute(query, {"id": id_programacion}).mappings().first()
     if not result:
