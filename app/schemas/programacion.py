@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field, validator
-from typing import Optional
+from typing import List, Optional
 from datetime import date, time
-
 
 class ProgramacionBase(BaseModel):
     id_instructor: int
@@ -24,7 +23,9 @@ class ProgramacionCreate(ProgramacionBase):
     pass
 
 
+
 class ProgramacionUpdate(BaseModel):
+    id_instructor: Optional[int] = None
     fecha_programada: Optional[date] = None
     horas_programadas: Optional[int] = Field(default=None, ge=1)
     hora_inicio: Optional[time] = None
@@ -58,3 +59,4 @@ class ProgramacionOut(BaseModel):
 
     class Config:
         orm_mode = True
+

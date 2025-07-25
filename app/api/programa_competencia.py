@@ -43,3 +43,17 @@ def get_programas_competencia_by_cod_competencia(
         return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/get-competencias-by-programa/{cod_programa}/{la_version}", response_model=List[ProgramaCompetenciaOut])
+def get_competencias_by_programa(
+    cod_programa: int,
+    la_version: int,
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    if current_user.id_rol not in [1, 2, 3]:
+        raise HTTPException(status_code=401, detail="No autorizado")
+    try:
+        return crud_pc.get_competencias_by_programa(db, cod_programa, la_version)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

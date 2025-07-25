@@ -75,6 +75,9 @@ def update_programacion(db: Session, id_programacion: int, data: ProgramacionUpd
     fields = data.model_dump(exclude_unset=True)
     if not fields:
         return False
+    
+    if "id_instructor" in fields and current_user.id_rol == 3:
+        raise PermissionError("No tiene permiso para cambiar el instructor.")
 
     if "hora_inicio" in fields and "hora_fin" in fields:
         if fields["hora_fin"] <= fields["hora_inicio"]:
@@ -115,11 +118,18 @@ def get_programacion_by_id(db: Session, id_programacion: int, current_user):
         WHERE programacion.id_programacion = :id
     """)
     result = db.execute(query, {"id": id_programacion}).mappings().first()
+    
     if not result:
         return None
-    if current_user.id_rol == 3 and result["id_user"] != current_user.id_usuario:
+
+    if current_user.id_rol == 3 and (
+        result["id_user"] != current_user.id_usuario and
+        result["id_instructor"] != current_user.id_usuario
+    ):
         raise PermissionError("No autorizado para consultar esta programación.")
+
     return convertir_a_time(dict(result))
+
 
 
 def get_all_programaciones(db: Session, filtros: dict):
@@ -186,3 +196,21 @@ def get_own_programaciones(db: Session, id_usuario: int):
         return row
 
     return [convertir_a_time(dict(r)) for r in resultados]
+
+
+def get_programaciones_by_instructor(db: Session, id_instructor: int):
+    query = text("""
+        SELECT programacion.*,
+               usuario.nombre_completo AS nombre_instructor,
+               competencia.nombre AS nombre_competencia,
+               resultado_aprendizaje.nombre AS nombre_resultado
+        FROM programacion
+        JOIN usuario ON programacion.id_instructor = usuario.id_usuario
+        JOIN competencia ON programacion.cod_competencia = competencia.cod_competencia
+        JOIN resultado_aprendizaje ON programacion.cod_resultado = resultado_aprendizaje.cod_resultado
+        WHERE programacion.id_instructor = :id_instructor
+        ORDER BY programacion.fecha_programada DESC
+    """)
+    resultados = db.execute(query, {"id_instructor": id_instructor}).mappings().all()
+    return [convertir_a_time(dict(r)) for r in resultados]
+

@@ -22,12 +22,20 @@ def create_programacion(
         if current_user.id_rol not in (1, 2, 3):
             raise HTTPException(status_code=403, detail="No autorizado")
 
+        # Si el usuario es instructor, aseguramos que use su propio id
+        if current_user.id_rol == 3:
+            prog_data = prog.dict()
+            prog_data["id_instructor"] = current_user.id_usuario
+            prog = ProgramacionCreate(**prog_data)
+
         crud_programacion.create_programacion(db, prog, id_user=current_user.id_usuario)
         return {"message": "Programación creada correctamente"}
+
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @router.put("/update/{id_programacion}", status_code=status.HTTP_200_OK)
@@ -99,3 +107,19 @@ def get_own_programacion(
     current_user: UserOut = Depends(get_current_user)
 ):
     return crud_programacion.get_own_programaciones(db, current_user.id_usuario)
+
+@router.get("/get-by-instructor/{id_instructor}", response_model=List[ProgramacionOut])
+def get_by_instructor(
+    id_instructor: int,
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    # Instructores solo pueden ver su propia programación
+    if current_user.id_rol == 3 and current_user.id_usuario != id_instructor:
+        raise HTTPException(status_code=403, detail="No autorizado")
+
+    try:
+        return crud_programacion.get_programaciones_by_instructor(db, id_instructor)
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

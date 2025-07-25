@@ -59,3 +59,35 @@ def update_horas_programa(db: Session, cod_programa: int, la_version: int, data:
         db.rollback()
         logger.error(f"Error al actualizar las horas del programa: {e}")
         raise Exception("Error al actualizar las horas del programa")
+
+
+def get_all_programas(db: Session, limit: int, offset: int):
+    query = text("""
+        SELECT cod_programa, la_version, nombre, horas_lectivas, horas_productivas
+        FROM programa_formacion
+        ORDER BY cod_programa ASC, la_version DESC
+        LIMIT :limit OFFSET :offset
+    """)
+    results = db.execute(query, {"limit": limit, "offset": offset}).mappings().all()
+    return [dict(row) for row in results] 
+
+
+def count_programas(db: Session) -> int:
+    query = text("SELECT COUNT(*) AS total FROM programa_formacion")
+    result = db.execute(query).scalar_one()
+    return result
+
+
+def buscar_por_nombre(db: Session, nombre: str):
+    try:
+        query = text("""
+            SELECT cod_programa, la_version, nombre, horas_lectivas, horas_productivas
+            FROM programa_formacion
+            WHERE nombre LIKE :nombre
+            ORDER BY cod_programa ASC, la_version DESC
+        """)
+        result = db.execute(query, {"nombre": f"%{nombre}%"}).mappings().all()
+        return [dict(row) for row in result]
+    except SQLAlchemyError as e:
+        logger.error(f"Error al buscar programas por nombre: {e}")
+        raise Exception("Error en la búsqueda")

@@ -8,6 +8,7 @@ class ProgramaCompetenciaOut(BaseModel):
     nombre_programa: str
     cod_competencia: int
     nombre_competencia: str
+    horas: int
 
     class Config:
         orm_mode = True
