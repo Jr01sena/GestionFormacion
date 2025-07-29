@@ -17,6 +17,15 @@ from app.api import programacion
 
 app = FastAPI()
 
+# Configuración de CORS para permitir todas las solicitudes desde cualquier origen
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permitir solicitudes desde cualquier origen
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Permitir estos métodos HTTP
+    allow_headers=["*"],  # Permitir cualquier encabezado en las solicitudes
+)
+
 # Incluir en el objeto app los routers
 app.include_router(auth.router, prefix="/access", tags=["login"])
 app.include_router(users.router, prefix="/users", tags=["users"])
@@ -34,16 +43,6 @@ app.include_router(grupo_instructor.router, prefix="/grupo-instructor", tags=["G
 app.include_router(programacion.router, prefix="/programacion", tags=["Programación"])
 app.include_router(metas.router, prefix="/metas", tags=["Metas"])
     
-
-
-# Configuración de CORS para permitir todas las solicitudes desde cualquier origen
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Permitir solicitudes desde cualquier origen
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Permitir estos métodos HTTP
-    allow_headers=["*"],  # Permitir cualquier encabezado en las solicitudes
-)
 
 @app.get("/")
 def read_root():

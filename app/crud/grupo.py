@@ -67,22 +67,6 @@ def get_grupo_by_cod_ficha(db: Session, cod_ficha: int):
 
 
 
-# def asignar_ambiente_grupo(db: Session, cod_ficha: int, ambiente_data: GrupoAmbienteUpdate) -> bool:
-#     try:
-#         query = text("""
-#             UPDATE grupo
-#             SET id_ambiente = :id_ambiente
-#             WHERE cod_ficha = :cod_ficha
-#         """)
-#         db.execute(query, {"id_ambiente": ambiente_data.id_ambiente, "cod_ficha": cod_ficha})
-#         db.commit()
-#         return True
-#     except SQLAlchemyError as e:
-#         db.rollback()
-#         logger.error(f"Error al asignar ambiente: {e}")
-#         raise Exception("Error de base de datos al asignar ambiente al grupo")
-
-
 def get_grupos_by_centro(db: Session, cod_centro: int, desde_fecha: Optional[date] = None):
     try:
         query = """
