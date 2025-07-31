@@ -15,7 +15,6 @@ async def upload_pe04(file: UploadFile = File(...), db: Session = Depends(get_db
     df = pd.read_excel(BytesIO(contents), engine="openpyxl", skiprows=4)
     return procesar_pe04(db, df)
 
-
 @router.post("/upload-excel-df14a/")
 async def upload_df14a(file: UploadFile = File(...), db: Session = Depends(get_db)):
     contents = await file.read()

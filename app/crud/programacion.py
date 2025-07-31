@@ -198,19 +198,20 @@ def get_own_programaciones(db: Session, id_usuario: int):
     return [convertir_a_time(dict(r)) for r in resultados]
 
 
-def get_programaciones_by_instructor(db: Session, id_instructor: int):
-    query = text("""
-        SELECT programacion.*,
-               usuario.nombre_completo AS nombre_instructor,
-               competencia.nombre AS nombre_competencia,
-               resultado_aprendizaje.nombre AS nombre_resultado
-        FROM programacion
-        JOIN usuario ON programacion.id_instructor = usuario.id_usuario
-        JOIN competencia ON programacion.cod_competencia = competencia.cod_competencia
-        JOIN resultado_aprendizaje ON programacion.cod_resultado = resultado_aprendizaje.cod_resultado
-        WHERE programacion.id_instructor = :id_instructor
-        ORDER BY programacion.fecha_programada DESC
-    """)
-    resultados = db.execute(query, {"id_instructor": id_instructor}).mappings().all()
-    return [convertir_a_time(dict(r)) for r in resultados]
+# def get_programaciones_by_instructor(db: Session, id_instructor: int):
+#     query = text("""
+#         SELECT programacion.*,
+#                usuario.nombre_completo AS nombre_instructor,
+#                competencia.nombre AS nombre_competencia,
+#                resultado_aprendizaje.nombre AS nombre_resultado
+#         FROM programacion
+#         JOIN usuario ON programacion.id_instructor = usuario.id_usuario
+#         JOIN competencia ON programacion.cod_competencia = competencia.cod_competencia
+#         JOIN resultado_aprendizaje ON programacion.cod_resultado = resultado_aprendizaje.cod_resultado
+#         WHERE programacion.id_instructor = :id_instructor
+#         ORDER BY programacion.fecha_programada DESC
+#     """)
+#     resultados = db.execute(query, {"id_instructor": id_instructor}).mappings().all()
+#     return [convertir_a_time(dict(r)) for r in resultados]
 
+# Funciones añadidas

@@ -108,18 +108,17 @@ def get_own_programacion(
 ):
     return crud_programacion.get_own_programaciones(db, current_user.id_usuario)
 
-@router.get("/get-by-instructor/{id_instructor}", response_model=List[ProgramacionOut])
-def get_by_instructor(
-    id_instructor: int,
-    db: Session = Depends(get_db),
-    current_user: UserOut = Depends(get_current_user)
-):
-    # Instructores solo pueden ver su propia programación
-    if current_user.id_rol == 3 and current_user.id_usuario != id_instructor:
-        raise HTTPException(status_code=403, detail="No autorizado")
+# @router.get("/get-by-instructor/{id_instructor}", response_model=List[ProgramacionOut])
+# def get_by_instructor(
+#     id_instructor: int,
+#     db: Session = Depends(get_db),
+#     current_user: UserOut = Depends(get_current_user)
+# ):
+#     # Instructores solo pueden ver su propia programación
+#     if current_user.id_rol == 3 and current_user.id_usuario != id_instructor:
+#         raise HTTPException(status_code=403, detail="No autorizado")
 
-    try:
-        return crud_programacion.get_programaciones_by_instructor(db, id_instructor)
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
+#     try:
+#         return crud_programacion.get_programaciones_by_instructor(db, id_instructor)
+#     except SQLAlchemyError as e:
+#         raise HTTPException(status_code=500, detail=str(e))

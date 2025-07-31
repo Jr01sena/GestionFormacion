@@ -41,6 +41,13 @@ def procesar_pe04(db: Session, df: pd.DataFrame):
     ]
     df = df.dropna(subset=campos_clave)
 
+    # DEPURACIÓN: Verifica si la fila 3340 sigue en el DataFrame
+    if 3340 in df.index:
+        print("La fila 3340 sigue en el DataFrame después del dropna:")
+        print(df.loc[3340])
+    else:
+        print("La fila 3340 fue eliminada por tener valores nulos en campos clave")
+
     for col in ["cod_ficha", "cod_centro", "cod_programa", "la_version"]:
         df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
 
@@ -48,6 +55,9 @@ def procesar_pe04(db: Session, df: pd.DataFrame):
     df["fecha_fin"] = pd.to_datetime(df["fecha_fin"], errors="coerce").dt.date
     df["hora_inicio"] = "00:00:00"
     df["hora_fin"] = "00:00:00"
+
+    # CONVERSIÓN IMPORTANTE
+    df = df.where(pd.notnull(df), None)
 
     df_programas = df[["cod_programa", "la_version", "nombre"]].drop_duplicates()
     df_programas["horas_lectivas"] = 0
@@ -85,6 +95,7 @@ def procesar_pe04(db: Session, df: pd.DataFrame):
         ON DUPLICATE KEY UPDATE estado_grupo=VALUES(estado_grupo)
     """)
 
+    # 1. Inserta todos los grupos primero
     for _, row in df_grupo.iterrows():
         try:
             db.execute(sql_grupo, row.to_dict())
@@ -92,6 +103,7 @@ def procesar_pe04(db: Session, df: pd.DataFrame):
             logger.error(f"[PE04] Error grupo {row['cod_ficha']}: {e}")
             errores.append(str(e))
 
+    # 2. Inserta todos los datos_grupo después
     df_datos = df[[
         "cod_ficha", "num_aprendices_masculinos", "num_aprendices_femenino",
         "num_aprendices_no_binario", "num_total_aprendices", "num_total_aprendices_activos"
@@ -128,7 +140,6 @@ def procesar_pe04(db: Session, df: pd.DataFrame):
         errores.append(str(e))
 
     return {"mensaje": "Carga PE-04 completada con errores" if errores else "Carga PE-04 exitosa", "errores": errores}
-
 
 
 def procesar_df14a(db: Session, df: pd.DataFrame):
@@ -213,7 +224,6 @@ def procesar_df14a(db: Session, df: pd.DataFrame):
         "mensaje": "Carga DF-14A completada con errores" if errores else "Carga DF-14A exitosa",
         "errores": errores
     }
-
 
 
 def procesar_juicios_evaluacion(db: Session, df: pd.DataFrame):

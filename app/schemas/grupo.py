@@ -21,17 +21,17 @@ class GrupoOut(BaseModel):
     estado_grupo: str
     nombre_nivel: str
     jornada: str
-    fecha_inicio: date
-    fecha_fin: date
+    fecha_inicio: Optional[date]  # ← ✅ Permitir None
+    fecha_fin: Optional[date]
     etapa: str
     modalidad: str
     responsable: str
-    nombre_empresa: str
+    nombre_empresa: Optional[str]  # ← ✅ Permitir None
     nombre_municipio: str
-    nombre_programa_especial: str
+    nombre_programa_especial: Optional[str]  # ← ✅ Permitir None
     hora_inicio: Optional[time]
     hora_fin: Optional[time]
     id_ambiente: Optional[int]
 
-class GrupoAmbienteUpdate(BaseModel):
-    id_ambiente: int
+    class Config:
+        orm_mode = True

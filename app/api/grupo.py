@@ -7,7 +7,7 @@ from fastapi import Query
 from core.database import get_db
 from core.dependencies import get_current_user
 from app.schemas.users import UserOut
-from app.schemas.grupo import GrupoEditableUpdate, GrupoOut, GrupoAmbienteUpdate
+from app.schemas.grupo import GrupoEditableUpdate, GrupoOut
 from app.crud import grupo as crud_grupo
 
 router = APIRouter()

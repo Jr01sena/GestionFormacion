@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from core.database import get_db
 from core.dependencies import get_current_user
 from app.schemas.users import UserOut
-from app.schemas.grupo_instructor import GrupoInstructorCreate, GrupoInstructorOut, GrupoInstructorUpdate
+from app.schemas.grupo_instructor import GrupoInstructorCreate, GrupoInstructorOut, GrupoInstructorUpdate, FichaOut
 from app.crud import grupo_instructor as crud_grupo_instructor
 from sqlalchemy.exc import SQLAlchemyError
 from typing import List
@@ -88,7 +88,7 @@ def update_asignacion(
             raise HTTPException(status_code=400, detail="El nuevo instructor no es válido (id_rol ≠ 3)")
 
         actualizado = crud_grupo_instructor.update_grupo_instructor(
-            db, data.cod_ficha, data.id_instructor_actual, data.id_instructor_nuevo
+            db, data.cod_ficha, data.id_instructor_actual, data.id_instructor_nuevo, data.fecha_asignacion
         )
 
         if not actualizado:
@@ -137,3 +137,17 @@ def get_instructores_by_ficha(
         return crud_grupo_instructor.get_instructores_by_ficha(db, cod_ficha)
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Error al obtener instructores")
+
+
+@router.get("/get-by-instructor", response_model=List[FichaOut])
+def get_fichas_by_instructor(
+    id_instructor: int = Query(...),
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    """Obtener fichas asignadas a un instructor específico"""
+    try:
+        fichas = crud_grupo_instructor.get_fichas_by_instructor(db, id_instructor)
+        return fichas
+    except SQLAlchemyError:
+        raise HTTPException(status_code=500, detail="Error al obtener fichas")

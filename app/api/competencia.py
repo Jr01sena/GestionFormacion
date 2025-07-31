@@ -5,6 +5,7 @@ from core.database import get_db
 from core.dependencies import get_current_user
 from app.schemas.users import UserOut
 from app.schemas.competencia import CompetenciaHorasUpdate, CompetenciaOut
+from typing import List
 from app.crud import competencia as crud_competencia
 
 router = APIRouter()
@@ -37,3 +38,16 @@ def update_horas_competencia(
         return {"message": "Competencia actualizada correctamente"}
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail="Error en la base de datos")
+
+@router.get("/get-by-ficha/{cod_ficha}", response_model=List[CompetenciaOut])
+def get_competencias_by_ficha(
+    cod_ficha: int,
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    """Obtener competencias asociadas a una ficha específica"""
+    try:
+        competencias = crud_competencia.get_competencias_by_ficha(db, cod_ficha)
+        return competencias
+    except SQLAlchemyError:
+        raise HTTPException(status_code=500, detail="Error al obtener competencias")

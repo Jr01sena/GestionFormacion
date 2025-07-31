@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
-from app.schemas.grupo import GrupoEditableUpdate, GrupoAmbienteUpdate
+from app.schemas.grupo import GrupoEditableUpdate
 from datetime import datetime, timedelta, time, date
 from typing import Optional
 import logging

@@ -1,3 +1,4 @@
+from datetime import date
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,8 +11,8 @@ logger = logging.getLogger(__name__)
 def create_grupo_instructor(db: Session, data: GrupoInstructorCreate):
     try:
         query = text("""
-            INSERT INTO grupo_instructor (cod_ficha, id_instructor)
-            VALUES (:cod_ficha, :id_instructor)
+            INSERT INTO grupo_instructor (cod_ficha, id_instructor, fecha_asignacion)
+            VALUES (:cod_ficha, :id_instructor, :fecha_asignacion)
         """)
         db.execute(query, data.model_dump())
         db.commit()
@@ -22,17 +23,18 @@ def create_grupo_instructor(db: Session, data: GrupoInstructorCreate):
         raise
 
 
-def update_grupo_instructor(db: Session, cod_ficha: int, id_actual: int, id_nuevo: int) -> bool:
+def update_grupo_instructor(db: Session, cod_ficha: int, id_actual: int, id_nuevo: int, fecha_asignacion: date) -> bool:
     try:
         query = text("""
             UPDATE grupo_instructor
-            SET id_instructor = :id_nuevo
+            SET id_instructor = :id_nuevo, fecha_asignacion = :fecha_asignacion
             WHERE cod_ficha = :cod_ficha AND id_instructor = :id_actual
         """)
         result = db.execute(query, {
             "cod_ficha": cod_ficha,
             "id_actual": id_actual,
-            "id_nuevo": id_nuevo
+            "id_nuevo": id_nuevo,
+            "fecha_asignacion": fecha_asignacion
         })
         db.commit()
         return result.rowcount > 0
@@ -60,7 +62,7 @@ def delete_grupo_instructor(db: Session, cod_ficha: int, id_instructor: int):
 def get_instructores_by_ficha(db: Session, cod_ficha: int):
     try:
         query = text("""
-            SELECT gi.cod_ficha, u.id_usuario AS id_instructor, u.nombre_completo
+            SELECT gi.cod_ficha, u.id_usuario AS id_instructor, u.nombre_completo, gi.fecha_asignacion      
             FROM grupo_instructor gi
             JOIN usuario u ON gi.id_instructor = u.id_usuario
             WHERE gi.cod_ficha = :cod_ficha
@@ -80,4 +82,17 @@ def verificar_instructor_valido(db: Session, id_instructor: int) -> bool:
         return result is not None
     except SQLAlchemyError as e:
         logger.error(f"Error al verificar rol de instructor: {e}")
+        raise
+
+def get_fichas_by_instructor(db: Session, id_instructor: int):
+    """Obtener fichas donde el instructor está asignado"""
+    try:
+        query = text("""
+            SELECT DISTINCT gi.cod_ficha
+            FROM grupo_instructor gi
+            WHERE gi.id_instructor = :id_instructor
+        """)
+        return db.execute(query, {"id_instructor": id_instructor}).mappings().all()
+    except SQLAlchemyError as e:
+        logger.error(f"Error al obtener fichas por instructor: {e}")
         raise
