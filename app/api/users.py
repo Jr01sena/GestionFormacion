@@ -122,20 +122,6 @@ def get_user_role_distribution(
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)
 ):
-    """
-    Endpoint para obtener la distribución de usuarios por rol.
-    
-    Este endpoint proporciona datos estadísticos sobre la cantidad de usuarios
-    que pertenecen a cada rol en la plataforma, útil para generar gráficos
-    circulares o de anillo (pie chart/donut chart).
-    
-    **Permisos requeridos:** Solo administradores (rol 1 o 2)
-    
-    **Retorna:**
-    - Lista de objetos con el nombre del rol y la cantidad de usuarios
-    - Los roles se ordenan por cantidad de usuarios (descendente)
-    """
-    # Verificar permisos - solo admins y superadmins pueden ver estas estadísticas
     if current_user.id_rol not in [1, 2]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
@@ -144,12 +130,7 @@ def get_user_role_distribution(
     
     try:
         distribution = crud_users.get_user_role_distribution(db)
-        
-        # Si no hay datos, retornar lista vacía
-        if not distribution:
-            return []
-            
-        return distribution
+        return distribution if distribution else []
         
     except SQLAlchemyError as e:
         raise HTTPException(
