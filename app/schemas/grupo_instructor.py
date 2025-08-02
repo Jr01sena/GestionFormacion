@@ -24,11 +24,3 @@ class FichaOut(BaseModel):
     
     class Config:
         orm_mode = True
-
-class CompetenciaOut(BaseModel):
-    cod_competencia: int
-    nombre: str
-    horas_programa: int
-    
-    class Config:
-        orm_mode = True

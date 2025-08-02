@@ -1,3 +1,4 @@
+from http.client import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
@@ -38,16 +39,17 @@ def get_competencias_by_ficha(db: Session, cod_ficha: int):
     """Obtener competencias del programa de la ficha"""
     try:
         query = text("""
-            SELECT c.cod_competencia, c.nombre, c.horas_programa
-            FROM competencia c
-            JOIN programa_competencia pc ON c.cod_competencia = pc.cod_competencia
-            JOIN programa_formacion pf ON pc.cod_programa = pf.cod_programa 
-                AND pc.la_version = pf.la_version
-            JOIN dato_grupo dg ON pf.cod_programa = dg.cod_programa 
-                AND pf.la_version = dg.la_version
-            WHERE dg.cod_ficha = :cod_ficha
+            SELECT c.cod_competencia, c.nombre, c.horas
+            FROM grupo g
+            JOIN programa_formacion pf 
+                ON g.cod_programa = pf.cod_programa AND g.la_version = pf.la_version
+            JOIN programa_competencia pc 
+                ON pf.cod_programa = pc.cod_programa AND pf.la_version = pc.la_version
+            JOIN competencia c 
+                ON pc.cod_competencia = c.cod_competencia
+            WHERE g.cod_ficha = :cod_ficha
         """)
         return db.execute(query, {"cod_ficha": cod_ficha}).mappings().all()
     except SQLAlchemyError as e:
-        logger.error(f"Error al obtener competencias por ficha: {e}")
-        raise
+        logger.error(f"❌ Error al obtener competencias por ficha: {e}")
+        raise HTTPException(status_code=500, detail="Error interno al obtener competencias")

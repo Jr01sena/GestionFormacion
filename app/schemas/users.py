@@ -24,3 +24,7 @@ class UserUpdate(BaseModel):
 class UserOut(UserBase):
     id_usuario: int
     rol: str
+
+class RoleDistribution(BaseModel):
+    rol_nombre: str
+    cantidad_usuarios: int

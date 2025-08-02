@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from core.dependencies import get_current_user
 from core.database import get_db
-from app.schemas.users import UserCreate, UserOut, UserUpdate
+from app.schemas.users import UserCreate, UserOut, UserUpdate, RoleDistribution
 from app.crud import users as crud_users
 from sqlalchemy.exc import SQLAlchemyError
 from core.config import settings
@@ -116,3 +116,43 @@ def get_users_by_centro(
         return users
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/role-distribution", response_model=List[RoleDistribution])
+def get_user_role_distribution(
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    """
+    Endpoint para obtener la distribución de usuarios por rol.
+    
+    Este endpoint proporciona datos estadísticos sobre la cantidad de usuarios
+    que pertenecen a cada rol en la plataforma, útil para generar gráficos
+    circulares o de anillo (pie chart/donut chart).
+    
+    **Permisos requeridos:** Solo administradores (rol 1 o 2)
+    
+    **Retorna:**
+    - Lista de objetos con el nombre del rol y la cantidad de usuarios
+    - Los roles se ordenan por cantidad de usuarios (descendente)
+    """
+    # Verificar permisos - solo admins y superadmins pueden ver estas estadísticas
+    if current_user.id_rol not in [1, 2]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Usuario no autorizado para ver estadísticas de roles"
+        )
+    
+    try:
+        distribution = crud_users.get_user_role_distribution(db)
+        
+        # Si no hay datos, retornar lista vacía
+        if not distribution:
+            return []
+            
+        return distribution
+        
+    except SQLAlchemyError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail="Error interno del servidor al obtener distribución de roles"
+        )

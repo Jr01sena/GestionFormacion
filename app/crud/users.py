@@ -151,3 +151,26 @@ def get_users_by_centro(db: Session, cod_centro: int):
     except SQLAlchemyError as e:
         logger.error(f"Error al obtener usuarios por cod_centro: {e}")
         raise Exception("Error de base de datos al obtener los usuarios")
+
+def get_user_role_distribution(db: Session):
+    """
+    Obtiene la distribución de usuarios por rol para gráficos estadísticos.
+    
+    Returns:
+        List: Lista de diccionarios con el nombre del rol y la cantidad de usuarios.
+    """
+    try:
+        query = text("""
+            SELECT 
+                rol.nombre AS rol_nombre,
+                COUNT(usuario.id_usuario) AS cantidad_usuarios
+            FROM rol
+            LEFT JOIN usuario ON rol.id_rol = usuario.id_rol
+            GROUP BY rol.id_rol, rol.nombre
+            ORDER BY cantidad_usuarios DESC
+        """)
+        result = db.execute(query).mappings().all()
+        return result
+    except SQLAlchemyError as e:
+        logger.error(f"Error al obtener distribución de roles: {e}")
+        raise Exception("Error de base de datos al obtener la distribución de roles")

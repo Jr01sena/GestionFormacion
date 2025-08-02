@@ -151,3 +151,4 @@ def get_fichas_by_instructor(
         return fichas
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Error al obtener fichas")
+
