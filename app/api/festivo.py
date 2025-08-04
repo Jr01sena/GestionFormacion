@@ -12,7 +12,7 @@ import holidays
 router = APIRouter()
 
 def authorize_admin(current_user: UserOut):
-    if current_user.id_rol not in [1, 2]:
+    if current_user.id_rol not in [1, 2, 3]:
         raise HTTPException(status_code=403, detail="Usuario no autorizado")
 
 @router.post("/cargar-festivos")

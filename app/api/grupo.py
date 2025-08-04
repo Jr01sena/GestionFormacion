@@ -19,7 +19,7 @@ def get_grupo_by_cod_ficha(
     db: Session = Depends(get_db),
     current_user: UserOut = Depends(get_current_user)
 ):
-    if current_user.id_rol not in [1, 2]:
+    if current_user.id_rol not in [1, 2, 3]:
         raise HTTPException(status_code=401, detail="No autorizado")
 
     grupo = crud_grupo.get_grupo_by_cod_ficha(db, cod_ficha)
