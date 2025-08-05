@@ -101,3 +101,44 @@ def get_grupos_by_centro(db: Session, cod_centro: int, desde_fecha: Optional[dat
     except SQLAlchemyError as e:
         logger.error(f"Error al obtener grupos por centro y fecha: {e}")
         raise Exception("Error de base de datos al obtener grupos")
+
+def estadisticas_por_modalidad_y_nivel(db: Session, cod_centro: Optional[int] = None):
+    try:
+        query = """
+            SELECT modalidad, nombre_nivel, COUNT(*) AS cantidad
+            FROM grupo
+            WHERE 1=1
+        """
+        params = {}
+
+        if cod_centro:
+            query += " AND cod_centro = :cod_centro"
+            params["cod_centro"] = cod_centro
+
+        query += " GROUP BY modalidad, nombre_nivel"
+
+        return db.execute(text(query), params).mappings().all()
+    except SQLAlchemyError as e:
+        logger.error(f"Error en estadisticas_por_modalidad_y_nivel: {e}")
+        raise Exception("Error al obtener estadísticas")
+
+
+def conteo_por_estado(db: Session, cod_centro: Optional[int] = None):
+    try:
+        query = """
+            SELECT estado_grupo AS estado, COUNT(*) AS cantidad
+            FROM grupo
+            WHERE 1=1
+        """
+        params = {}
+
+        if cod_centro:
+            query += " AND cod_centro = :cod_centro"
+            params["cod_centro"] = cod_centro
+
+        query += " GROUP BY estado_grupo"
+
+        return db.execute(text(query), params).mappings().all()
+    except SQLAlchemyError as e:
+        logger.error(f"Error en conteo_por_estado: {e}")
+        raise Exception("Error al obtener conteo por estado")

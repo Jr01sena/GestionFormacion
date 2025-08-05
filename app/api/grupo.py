@@ -65,3 +65,26 @@ def get_grupos_by_cod_centro(
         raise HTTPException(status_code=404, detail="No se encontraron grupos para el centro y fecha")
 
     return grupos
+
+@router.get("/estadisticas/modalidad-nivel")
+def get_estadisticas_modalidad_nivel(
+    cod_centro: Optional[int] = None,
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    if current_user.id_rol not in [1, 2, 3]:
+        raise HTTPException(status_code=401, detail="No autorizado")
+    
+    return crud_grupo.estadisticas_por_modalidad_y_nivel(db, cod_centro)
+
+
+@router.get("/estadisticas/estados")
+def get_estadisticas_estados(
+    cod_centro: Optional[int] = None,
+    db: Session = Depends(get_db),
+    current_user: UserOut = Depends(get_current_user)
+):
+    if current_user.id_rol not in [1, 2, 3]:
+        raise HTTPException(status_code=401, detail="No autorizado")
+    
+    return crud_grupo.conteo_por_estado(db, cod_centro)
